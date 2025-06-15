@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:random_app/ui/screens/data_verification/data_verification_screen.dart';
+import 'package:random_app/ui/screens/registration/widgets/auto_complete_text_field.dart';
+import 'package:random_app/ui/screens/registration/widgets/custom_text_field.dart';
 
 class RegistrationScreen extends StatefulWidget {
   @override
@@ -53,17 +55,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _updateButtonState() {
-    setState(() {
-    });
+    setState(() {});
+  }
+
+  void _unfocusAllAndFocus(FocusNode targetFocusNode) {
+    _cityFocusNode.unfocus();
+    _streetFocusNode.unfocus();
+    _houseFocusNode.unfocus();
+    _apartmentFocusNode.unfocus();
+    targetFocusNode.requestFocus();
   }
 
   void _onCityFocusChange() {
     if (_cityFocusNode.hasFocus) {
-      _streetFocusNode.unfocus();
-      _houseFocusNode.unfocus();
-      _apartmentFocusNode.unfocus();
+      _unfocusAllAndFocus(_cityFocusNode); // Ensure only city has focus
       setState(() {
         showCityDropdown = true;
+        showStreetDropdown = false; // Close other dropdown
       });
     } else {
       Future.delayed(const Duration(milliseconds: 100), () {
@@ -78,11 +86,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void _onStreetFocusChange() {
     if (_streetFocusNode.hasFocus) {
-      _cityFocusNode.unfocus();
-      _houseFocusNode.unfocus();
-      _apartmentFocusNode.unfocus();
+      _unfocusAllAndFocus(_streetFocusNode); // Ensure only street has focus
       setState(() {
         showStreetDropdown = true;
+        showCityDropdown = false; // Close other dropdown
       });
     } else {
       Future.delayed(const Duration(milliseconds: 100), () {
@@ -97,9 +104,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void _onHouseFocusChange() {
     if (_houseFocusNode.hasFocus) {
-      _cityFocusNode.unfocus();
-      _streetFocusNode.unfocus();
-      _apartmentFocusNode.unfocus();
+      _unfocusAllAndFocus(_houseFocusNode); // Ensure only house has focus
       setState(() {
         showCityDropdown = false;
         showStreetDropdown = false;
@@ -109,9 +114,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void _onApartmentFocusChange() {
     if (_apartmentFocusNode.hasFocus) {
-      _cityFocusNode.unfocus();
-      _streetFocusNode.unfocus();
-      _houseFocusNode.unfocus();
+      _unfocusAllAndFocus(_apartmentFocusNode); // Ensure only apartment has focus
       setState(() {
         showCityDropdown = false;
         showStreetDropdown = false;
@@ -174,236 +177,70 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 children: [
                   const SizedBox(height: 20),
 
-                  Text(
-                    'Выберете город',
-                    style: const TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Container(
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Color(0xFFE0E0E0), width: 1.0),
-                      ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextField(
-                        controller: _cityController,
-                        focusNode: _cityFocusNode,
-                        onChanged: _filterCities,
-                        onTap: () => _cityFocusNode.requestFocus(),
-                        textAlignVertical: TextAlignVertical.center,
-                        style: const TextStyle(fontSize: 18, color: Colors.black, fontFamily: 'Montserrat'),
-                        decoration: InputDecoration(
-                          hintText: 'Город',
-                          hintStyle: const TextStyle(color: Colors.grey, fontSize: 18, fontFamily: 'Montserrat'),
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                          suffixIcon: GestureDetector(
-                            onTap: () {
-                              if (_cityFocusNode.hasFocus) {
-                                _cityFocusNode.unfocus();
-                              } else {
-                                _cityFocusNode.requestFocus();
-                              }
-                            },
-                            child: AnimatedRotation(
-                              turns: showCityDropdown ? 0.5 : 0.0,
-                              duration: const Duration(milliseconds: 200),
-                              child: const Icon(Icons.keyboard_arrow_down, color: Colors.black54),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    child: Container(
-                      height: showCityDropdown && filteredCities.isNotEmpty
-                          ? (filteredCities.length > 2 ? 2 : filteredCities.length) * 44.0
-                          : 0,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        itemCount: filteredCities.length > 2 ? 2 : filteredCities.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              _cityController.text = filteredCities[index];
-                              _cityFocusNode.unfocus();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
-                              child: Text(filteredCities[index], style: const TextStyle(fontSize: 18, color: Colors.black, fontFamily: 'Montserrat')),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                  AutoCompleteTextField(
+                    controller: _cityController,
+                    focusNode: _cityFocusNode,
+                    labelText: 'Выберете город',
+                    hintText: 'Город',
+                    suggestions: filteredCities,
+                    showDropdown: showCityDropdown,
+                    onChanged: _filterCities,
+                    onSuggestionSelected: (String selectedCity) {
+                      _cityController.text = selectedCity;
+                      _cityFocusNode.unfocus();
+                    },
+                    onTapSuffixIcon: () {
+                      if (_cityFocusNode.hasFocus) {
+                        _cityFocusNode.unfocus();
+                      } else {
+                        _cityFocusNode.requestFocus();
+                      }
+                    },
                   ),
 
                   const SizedBox(height: 30),
 
-                  Text(
-                    'Выберете улицу',
-                    style: const TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Container(
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Color(0xFFE0E0E0), width: 1.0),
-                      ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextField(
-                        controller: _streetController,
-                        focusNode: _streetFocusNode,
-                        onChanged: _filterStreets,
-                        onTap: () => _streetFocusNode.requestFocus(),
-                        textAlignVertical: TextAlignVertical.center,
-                        style: const TextStyle(fontSize: 18, color: Colors.black, fontFamily: 'Montserrat'),
-                        decoration: InputDecoration(
-                          hintText: 'Улица',
-                          hintStyle: const TextStyle(color: Colors.grey, fontSize: 18, fontFamily: 'Montserrat'),
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                          suffixIcon: GestureDetector(
-                            onTap: () {
-                              if (_streetFocusNode.hasFocus) {
-                                _streetFocusNode.unfocus();
-                              } else {
-                                _streetFocusNode.requestFocus();
-                              }
-                            },
-                            child: AnimatedRotation(
-                              turns: showStreetDropdown ? 0.5 : 0.0,
-                              duration: const Duration(milliseconds: 200),
-                              child: const Icon(Icons.keyboard_arrow_down, color: Colors.black54),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  AnimatedSize(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    child: Container(
-                      height: showStreetDropdown && filteredStreets.isNotEmpty
-                          ? (filteredStreets.length > 2 ? 2 : filteredStreets.length) * 44.0
-                          : 0,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        itemCount: filteredStreets.length > 2 ? 2 : filteredStreets.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              _streetController.text = filteredStreets[index];
-                              _streetFocusNode.unfocus();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
-                              child: Text(filteredStreets[index], style: const TextStyle(fontSize: 18, color: Colors.black, fontFamily: 'Montserrat')),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                  AutoCompleteTextField(
+                    controller: _streetController,
+                    focusNode: _streetFocusNode,
+                    labelText: 'Выберете улицу',
+                    hintText: 'Улица',
+                    suggestions: filteredStreets,
+                    showDropdown: showStreetDropdown,
+                    onChanged: _filterStreets,
+                    onSuggestionSelected: (String selectedStreet) {
+                      _streetController.text = selectedStreet;
+                      _streetFocusNode.unfocus();
+                    },
+                    onTapSuffixIcon: () {
+                      if (_streetFocusNode.hasFocus) {
+                        _streetFocusNode.unfocus();
+                      } else {
+                        _streetFocusNode.requestFocus();
+                      }
+                    },
                   ),
 
                   const SizedBox(height: 30),
 
-                  Text(
-                    'Номер дома',
-                    style: const TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Container(
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Color(0xFFE0E0E0), width: 1.0),
-                      ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextField(
-                        controller: _houseController,
-                        focusNode: _houseFocusNode,
-                        keyboardType: TextInputType.number,
-                        textAlignVertical: TextAlignVertical.center,
-                        style: const TextStyle(fontSize: 18, color: Colors.black, fontFamily: 'Montserrat'),
-                        decoration: const InputDecoration(
-                          hintText: '',
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                        onChanged: (text) => _updateButtonState(),
-                      ),
-                    ),
+                  CustomTextField(
+                    controller: _houseController,
+                    focusNode: _houseFocusNode,
+                    labelText: 'Номер дома',
+                    keyboardType: TextInputType.number,
+                    onChanged: (text) => _updateButtonState(),
+                    onTap: () => _houseFocusNode.requestFocus(),
                   ),
 
                   const SizedBox(height: 30),
 
-                  Text(
-                    'Номер квартиры',
-                    style: const TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Container(
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Color(0xFFE0E0E0), width: 1.0),
-                      ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextField(
-                        controller: _apartmentController,
-                        focusNode: _apartmentFocusNode,
-                        keyboardType: TextInputType.number,
-                        textAlignVertical: TextAlignVertical.center,
-                        style: const TextStyle(fontSize: 18, color: Colors.black, fontFamily: 'Montserrat'),
-                        decoration: const InputDecoration(
-                          hintText: '',
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                        onChanged: (text) => _updateButtonState(),
-                      ),
-                    ),
+                  CustomTextField(
+                    controller: _apartmentController,
+                    focusNode: _apartmentFocusNode,
+                    labelText: 'Номер квартиры',
+                    keyboardType: TextInputType.number,
+                    onChanged: (text) => _updateButtonState(),
+                    onTap: () => _apartmentFocusNode.requestFocus(),
                   ),
                   const SizedBox(height: 50),
                 ],
@@ -431,10 +268,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         activeColor: const Color(0xFF424242),
                       ),
                     ),
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         'Я прочитал и согласен с пользовательским соглашением, политикой конфиденциальности и согласием на сбор и обработку персональных \nданных',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.black87,
                           fontSize: 11,
                           fontFamily: 'Montserrat',
@@ -446,7 +283,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                Container(
+                SizedBox(
                   width: double.infinity,
                   height: 64,
                   child: ElevatedButton(
@@ -477,10 +314,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        Center(
+                        const Center(
                           child: Text(
                             'ДОБАВИТЬ',
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,

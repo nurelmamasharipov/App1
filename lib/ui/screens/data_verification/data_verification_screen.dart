@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:random_app/ui/screens/main/main_screen.dart';
+import 'package:random_app/ui/screens/data_verification/widgets/verification_detail_field.dart';
 
 class DataVerificationScreen extends StatelessWidget {
   final String city;
@@ -44,142 +45,31 @@ class DataVerificationScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 20),
 
-                  const Text(
-                    'Город:',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Color(0xFFE0E0E0), width: 1.0),
-                      ),
-                    ),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      city,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Montserrat',
-                      ),
-                    ),
+                  VerificationDetailField(
+                    labelText: 'Город:',
+                    valueText: city,
+                    isStreetField: false,
                   ),
                   const SizedBox(height: 30),
 
-                  const Text(
-                    'Улица:',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Color(0xFFE0E0E0), width: 1.0),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            street,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Montserrat',
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey.shade300, width: 1),
-                            image: const DecorationImage(
-                              image: NetworkImage('https://placehold.co/24x24/E0E0E0/FFFFFF?text=PIC'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  VerificationDetailField(
+                    labelText: 'Улица:',
+                    valueText: street,
+                    isStreetField: false,
                   ),
                   const SizedBox(height: 30),
 
-                  const Text(
-                    'Номер дома:',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Color(0xFFE0E0E0), width: 1.0),
-                      ),
-                    ),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      house,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Montserrat',
-                      ),
-                    ),
+                  VerificationDetailField(
+                    labelText: 'Номер дома:',
+                    valueText: house,
+                    isStreetField: false,
                   ),
                   const SizedBox(height: 30),
 
-                  const Text(
-                    'Номер квартиры:',
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    height: 30,
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Color(0xFFE0E0E0), width: 1.0),
-                      ),
-                    ),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      apartment,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Montserrat',
-                      ),
-                    ),
+                  VerificationDetailField(
+                    labelText: 'Номер квартиры:',
+                    valueText: apartment,
+                    isStreetField: false,
                   ),
                   const SizedBox(height: 50),
                 ],
@@ -217,7 +107,7 @@ class DataVerificationScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
 
-                Container(
+                SizedBox(
                   width: double.infinity,
                   height: 64,
                   child: ElevatedButton(
@@ -240,10 +130,10 @@ class DataVerificationScreen extends StatelessWidget {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        Center(
+                        const Center(
                           child: Text(
                             'СОХРАНИТЬ',
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
