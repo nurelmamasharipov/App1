@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:random_app/ui/screens/main/models/main_screen__item.dart';
 import 'package:random_app/ui/screens/main/widgets/main_carousel_card.dart';
 import 'package:random_app/ui/screens/main/widgets/add_object_card.dart';
+import 'package:random_app/ui/screens/main/widgets/service_card.dart';
+
+import 'models/service_item.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -24,6 +27,25 @@ class _MainScreenState extends State<MainScreen> {
     ),
   ];
 
+  final List<ServiceItem> _serviceItems = [
+    const ServiceItem(
+      title: 'МП “ТОКМОК ВОДОКАНАЛ”',
+      city: 'Токмок',
+      street: 'Ленина',
+      houseNumber: '256, кв.31',
+      accountNumber: '12100558-4',
+      debt: '1200,00',
+    ),
+    const ServiceItem(
+      title: 'МП “ТОКМОК ТАЗАЛЫК”',
+      city: 'Токмок',
+      street: 'Ленина',
+      houseNumber: '256, кв.31',
+      accountNumber: '132323-1',
+      debt: '535,20',
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +58,7 @@ class _MainScreenState extends State<MainScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: SizedBox(
@@ -58,8 +81,17 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
-          const Expanded(
-            child: SizedBox.shrink(),
+          const SizedBox(height: 24),
+
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: _serviceItems.length,
+              itemBuilder: (context, index) {
+                final serviceItem = _serviceItems[index];
+                return ServiceCard(item: serviceItem);
+              },
+            ),
           ),
         ],
       ),

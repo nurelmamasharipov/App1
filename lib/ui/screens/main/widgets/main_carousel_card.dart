@@ -15,7 +15,7 @@ class MainCarouselCard extends StatelessWidget {
       margin: const EdgeInsets.only(right: 10),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: const Color(0xFF4A90E2),
+        color: const Color(0xCC1C8ECE),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(

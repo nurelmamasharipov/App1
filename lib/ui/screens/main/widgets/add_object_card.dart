@@ -13,7 +13,6 @@ class AddObjectCard extends StatelessWidget {
     return Container(
       width: 100,
       height: 150,
-      // margin: const EdgeInsets.only(left: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
